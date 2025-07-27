@@ -1,5 +1,5 @@
+import { Stack, Redirect } from "expo-router";
 import { useAuth } from "@/providers/AuthProvider";
-import { Slot, Redirect } from "expo-router";
 import { ActivityIndicator } from "react-native";
 
 export default function ProtectedLayout() {
@@ -13,5 +13,10 @@ export default function ProtectedLayout() {
     return <Redirect href={"/sign-in"} />;
   }
 
-  return <Slot />;
+  return (
+    <Stack>
+      <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+      <Stack.Screen name="new" options={{ title: "", presentation: "modal" }} />
+    </Stack>
+  );
 }

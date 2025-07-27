@@ -1,5 +1,5 @@
 import "../../global.css";
-import { Stack } from "expo-router";
+import { Slot, Stack } from "expo-router";
 import {
   ThemeProvider,
   DefaultTheme,
@@ -20,10 +20,7 @@ export default function RootLayout() {
   return (
     <AuthProvider>
       <ThemeProvider value={CustomTheme}>
-        <Stack>
-          <Stack.Screen name="index" options={{ title: "Feed" }} />
-          <Stack.Screen name="post/[id]" options={{ title: "Post" }} />
-        </Stack>
+        <Slot />
       </ThemeProvider>
     </AuthProvider>
   );
