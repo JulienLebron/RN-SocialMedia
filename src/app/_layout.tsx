@@ -5,6 +5,7 @@ import {
   DefaultTheme,
   DarkTheme,
 } from "@react-navigation/native";
+import { AuthProvider } from "@/providers/AuthProvider";
 
 const CustomTheme = {
   ...DefaultTheme,
@@ -17,11 +18,13 @@ const CustomTheme = {
 
 export default function RootLayout() {
   return (
-    <ThemeProvider value={CustomTheme}>
-      <Stack>
-        <Stack.Screen name="index" options={{ title: "Feed" }} />
-        <Stack.Screen name="post/[id]" options={{ title: "Post" }} />
-      </Stack>
-    </ThemeProvider>
+    <AuthProvider>
+      <ThemeProvider value={CustomTheme}>
+        <Stack>
+          <Stack.Screen name="index" options={{ title: "Feed" }} />
+          <Stack.Screen name="post/[id]" options={{ title: "Post" }} />
+        </Stack>
+      </ThemeProvider>
+    </AuthProvider>
   );
 }
