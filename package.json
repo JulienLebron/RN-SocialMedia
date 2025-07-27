@@ -9,6 +9,7 @@
     "web": "expo start --web"
   },
   "dependencies": {
+    "dayjs": "^1.11.13",
     "expo": "~53.0.20",
     "expo-status-bar": "~2.2.3",
     "nativewind": "^4.1.23",
