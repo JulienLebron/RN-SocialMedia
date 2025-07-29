@@ -3,30 +3,30 @@ import FeedPostItem from "@/components/FeedPostItem";
 import dummyPosts from "@/dummyPosts";
 import { Link } from "expo-router";
 import { AntDesign } from "@expo/vector-icons";
+import { useEffect, useState } from "react";
+import { Post } from "@/types/models";
 
 export default function FeedScreen() {
-  const fetchApi = async () => {
-    console.log("Secret from Client side: ", process.env.SECRET_KEY);
-    console.log(
-      "Public from Client Side: ",
-      process.env.EXPO_PUBLIC_SHARED_KIT
-    );
+  const [posts, setPosts] = useState<Post[]>([]);
+  console.log(posts);
+  useEffect(() => {
+    const fetchPosts = async () => {
+      const response = await fetch("/api/posts");
+      const data = await response.json();
+      setPosts(data.posts);
+    };
 
-    const response = await fetch("/hello");
-    const json = await response.json();
-    console.log("Response from client side request: ", json);
-  };
+    fetchPosts();
+  }, []);
+
   return (
     <>
       <FlatList
-        data={dummyPosts}
+        data={posts}
         renderItem={({ item }) => (
           <Link href={`/post/${item.id}`}>
             <FeedPostItem post={item} />
           </Link>
-        )}
-        ListFooterComponent={() => (
-          <Button onPress={fetchApi} title="Fetch API" />
         )}
       />
 
