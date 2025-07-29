@@ -1,8 +1,17 @@
 import dummyPosts from "@/dummyPosts";
+import { neon } from "@neondatabase/serverless";
 
-export function GET(request: Request) {
+const sql = neon(process.env.NEON_DATABASE_URL!);
+
+export async function GET(request: Request) {
   // read posts from database
   const posts = dummyPosts;
+  console.log(posts);
+
+  // test connect
+  // const result = await sql`SELECT version()`;
+  const result = await sql`SELECT * FROM posts`;
+  console.log(posts);
 
   return Response.json({ posts });
 }
