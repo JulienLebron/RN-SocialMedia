@@ -46,7 +46,8 @@ export function AuthProvider({ children }: PropsWithChildren) {
         name: "Vadim",
         avatar,
       },
-      accessToken: "accessToken",
+      accessToken:
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjQ0ZjRlZmE5LWVmZDYtNDY2Yy04ZDhjLTNmZTg5YjlmMjljZCIsImlhdCI6MTc1Mzk3MzcyNSwiZXhwIjoxNzU2NTY1NzI1fQ.g5IY4X0IN235_QKDyClTafKCGRuipcpLYxNtMSwHaHo",
     };
 
     setSession(session);

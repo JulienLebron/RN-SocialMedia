@@ -13,7 +13,6 @@ export async function GET(request: Request) {
     return new Response("Unauthorized", { status: 401 });
   }
 
-  // test connect
   const { searchParams } = new URL(request.url);
 
   const limit = parseInt(searchParams.get("limit") || "3");
