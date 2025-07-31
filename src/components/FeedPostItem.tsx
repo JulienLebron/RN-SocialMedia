@@ -20,15 +20,15 @@ export default function FeedPostItem({ post }: FeedPostItemProps) {
 
   const likeMutation = useMutation({
     mutationFn: () => likePostRequest(post.id, session?.accessToken!),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["posts"] });
+    onSettled: () => {
+      return queryClient.invalidateQueries({ queryKey: ["posts"] });
     },
   });
 
   const unlikeMutation = useMutation({
     mutationFn: () => unlikePostRequest(post.id, session?.accessToken!),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["posts"] });
+    onSettled: () => {
+      return queryClient.invalidateQueries({ queryKey: ["posts"] });
     },
   });
 
@@ -65,17 +65,39 @@ export default function FeedPostItem({ post }: FeedPostItemProps) {
             <Text className="text-gray-500">{post.retweets_count}</Text>
           </View>
 
-          <View className="flex-row items-center gap-1">
-            <MaterialCommunityIcons
-              onPress={() =>
-                post.is_liked ? unlikeMutation.mutate() : likeMutation.mutate()
-              }
-              name={post.is_liked ? "heart" : "heart-outline"}
-              size={20}
-              color={post.is_liked ? "crimson" : "gray"}
-            />
-            <Text className="text-gray-500">{post.likes_count}</Text>
-          </View>
+          {likeMutation.isPending ? (
+            <View className="flex-row items-center gap-1">
+              <MaterialCommunityIcons
+                name={"heart"}
+                size={20}
+                color={"crimson"}
+              />
+              <Text className="text-gray-500">{post.likes_count + 1}</Text>
+            </View>
+          ) : unlikeMutation.isPending ? (
+            <View className="flex-row items-center gap-1">
+              <MaterialCommunityIcons
+                name={"heart-outline"}
+                size={20}
+                color={"gray"}
+              />
+              <Text className="text-gray-500">{post.likes_count - 1}</Text>
+            </View>
+          ) : (
+            <View className="flex-row items-center gap-1">
+              <MaterialCommunityIcons
+                onPress={() =>
+                  post.is_liked
+                    ? unlikeMutation.mutate()
+                    : likeMutation.mutate()
+                }
+                name={post.is_liked ? "heart" : "heart-outline"}
+                size={20}
+                color={post.is_liked ? "crimson" : "gray"}
+              />
+              <Text className="text-gray-500">{post.likes_count}</Text>
+            </View>
+          )}
         </View>
       </View>
     </View>
