@@ -17,6 +17,7 @@
     "expo-router": "~5.1.4",
     "expo-secure-store": "~14.2.3",
     "expo-status-bar": "~2.2.3",
+    "jsonwebtoken": "^9.0.2",
     "nativewind": "^4.1.23",
     "prettier-plugin-tailwindcss": "^0.5.11",
     "react": "19.0.0",
@@ -28,6 +29,7 @@
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",
+    "@types/jsonwebtoken": "^9.0.10",
     "@types/react": "~19.0.10",
     "typescript": "~5.8.3"
   },
