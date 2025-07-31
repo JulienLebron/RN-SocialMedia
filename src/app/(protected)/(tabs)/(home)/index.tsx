@@ -11,16 +11,35 @@ import { Link } from "expo-router";
 import { AntDesign } from "@expo/vector-icons";
 import { useEffect, useState } from "react";
 import { Post } from "@/types/models";
-import { useQuery } from "@tanstack/react-query";
+import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 import { useAuth } from "@/providers/AuthProvider";
 import { getPosts } from "@/services/postService";
 
 export default function FeedScreen() {
   const { session } = useAuth();
 
-  const { data, isLoading, error, refetch, isRefetching } = useQuery({
+  const {
+    data,
+    isLoading,
+    error,
+    refetch,
+    isRefetching,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useInfiniteQuery({
     queryKey: ["posts"],
-    queryFn: () => getPosts(session?.accessToken!),
+    queryFn: ({ pageParam }) => getPosts(pageParam, session?.accessToken!),
+    initialPageParam: { limit: 20, cursor: undefined },
+    getNextPageParam: (lastPage, pages) => {
+      if (lastPage.length === 0) {
+        return undefined;
+      }
+      return {
+        limit: 5,
+        cursor: lastPage[lastPage.length - 1].id,
+      };
+    },
   });
 
   if (isLoading) {
@@ -31,10 +50,12 @@ export default function FeedScreen() {
     return <Text>Error fetching the posts</Text>;
   }
 
+  const posts = data?.pages.flat() || [];
+
   return (
     <>
       <FlatList
-        data={data}
+        data={posts}
         renderItem={({ item }) => (
           <Link href={`/post/${item.id}`} asChild>
             <Pressable>
@@ -44,6 +65,11 @@ export default function FeedScreen() {
         )}
         onRefresh={refetch}
         refreshing={isRefetching}
+        onEndReachedThreshold={2}
+        onEndReached={() =>
+          !isFetchingNextPage && hasNextPage && fetchNextPage()
+        }
+        ListFooterComponent={() => isFetchingNextPage && <ActivityIndicator />}
       />
 
       <Link href="/new" asChild>
