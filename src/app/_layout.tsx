@@ -6,6 +6,10 @@ import {
   DarkTheme,
 } from "@react-navigation/native";
 import { AuthProvider } from "@/providers/AuthProvider";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { useReactQueryDevTools } from "@dev-plugins/react-query";
+
+const queryClient = new QueryClient();
 
 const CustomTheme = {
   ...DefaultTheme,
@@ -17,11 +21,15 @@ const CustomTheme = {
 };
 
 export default function RootLayout() {
+  useReactQueryDevTools(queryClient);
+
   return (
     <AuthProvider>
-      <ThemeProvider value={CustomTheme}>
-        <Slot />
-      </ThemeProvider>
+      <QueryClientProvider client={queryClient}>
+        <ThemeProvider value={CustomTheme}>
+          <Slot />
+        </ThemeProvider>
+      </QueryClientProvider>
     </AuthProvider>
   );
 }
