@@ -24,12 +24,12 @@ export default function RootLayout() {
   useReactQueryDevTools(queryClient);
 
   return (
-    <AuthProvider>
-      <QueryClientProvider client={queryClient}>
+    <QueryClientProvider client={queryClient}>
+      <AuthProvider>
         <ThemeProvider value={CustomTheme}>
           <Slot />
         </ThemeProvider>
-      </QueryClientProvider>
-    </AuthProvider>
+      </AuthProvider>
+    </QueryClientProvider>
   );
 }

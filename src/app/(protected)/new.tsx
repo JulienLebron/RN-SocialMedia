@@ -1,16 +1,28 @@
+import { useAuth } from "@/providers/AuthProvider";
+import { createPostRequest } from "@/services/postService";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { router, Stack } from "expo-router";
 import { useState } from "react";
-import { TextInput, View, Text, Button } from "react-native";
+import { TextInput, View, Text, Button, Alert } from "react-native";
 
 export default function NewPost() {
   const [content, setContent] = useState("");
+  const { session } = useAuth();
 
-  const handleCreate = () => {
-    // send the post to the backend
+  const queryClient = useQueryClient();
 
-    setContent("");
-    router.back();
-  };
+  const { mutate, isPending } = useMutation({
+    mutationFn: () => createPostRequest({ content }, session?.accessToken!),
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ["posts"] });
+
+      setContent("");
+      router.back();
+    },
+    onError: (error) => {
+      Alert.alert("Failed to create post");
+    },
+  });
 
   return (
     <View className="flex-1 p-4">
@@ -24,8 +36,8 @@ export default function NewPost() {
           headerRight: () => (
             <Button
               title="Post"
-              onPress={handleCreate}
-              disabled={content.trim().length === 0}
+              onPress={() => mutate()}
+              disabled={content.trim().length === 0 || isPending}
             />
           ),
         }}

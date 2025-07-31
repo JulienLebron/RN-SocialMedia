@@ -36,8 +36,10 @@ export default function FeedScreen() {
       <FlatList
         data={data}
         renderItem={({ item }) => (
-          <Link href={`/post/${item.id}`}>
-            <FeedPostItem post={item} />
+          <Link href={`/post/${item.id}`} asChild>
+            <Pressable>
+              <FeedPostItem post={item} />
+            </Pressable>
           </Link>
         )}
         onRefresh={refetch}

@@ -7,6 +7,8 @@ import {
 } from "react";
 import { User } from "@/types/models";
 import * as SecureStore from "expo-secure-store";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { signInRequest } from "@/services/authService";
 
 type Session = {
   user: User;
@@ -32,29 +34,25 @@ export function AuthProvider({ children }: PropsWithChildren) {
   const [session, setSession] = useState<Session | null>();
   const [isLoading, setIsLoading] = useState(true); // Change it to true after adding the session load
 
+  const queryClient = useQueryClient();
+
+  const { mutate: signIn } = useMutation({
+    mutationFn: (handle: string) => signInRequest(handle),
+    onSuccess: (data) => {
+      setSession(data);
+      saveSession(data);
+    },
+    onError: (error) => {
+      console.log(error);
+    },
+  });
+
   useEffect(() => {
     loadSession();
   }, []);
 
-  const signIn = (handle: string) => {
-    // sign in with the server
-
-    const session: Session = {
-      user: {
-        id: "1",
-        handle,
-        name: "Vadim",
-        avatar,
-      },
-      accessToken:
-        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjQ0ZjRlZmE5LWVmZDYtNDY2Yy04ZDhjLTNmZTg5YjlmMjljZCIsImlhdCI6MTc1Mzk3MzcyNSwiZXhwIjoxNzU2NTY1NzI1fQ.g5IY4X0IN235_QKDyClTafKCGRuipcpLYxNtMSwHaHo",
-    };
-
-    setSession(session);
-    saveSession(session);
-  };
-
   const signOut = () => {
+    queryClient.clear();
     setSession(null);
     saveSession(null);
   };

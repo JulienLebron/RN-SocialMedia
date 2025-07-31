@@ -3,6 +3,9 @@ import { View, Text, Image } from "react-native";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { useAuth } from "@/providers/AuthProvider";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { likePostRequest, unlikePostRequest } from "@/services/postService";
 
 dayjs.extend(relativeTime);
 
@@ -11,6 +14,24 @@ type FeedPostItemProps = {
 };
 
 export default function FeedPostItem({ post }: FeedPostItemProps) {
+  const { session } = useAuth();
+
+  const queryClient = useQueryClient();
+
+  const likeMutation = useMutation({
+    mutationFn: () => likePostRequest(post.id, session?.accessToken!),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["posts"] });
+    },
+  });
+
+  const unlikeMutation = useMutation({
+    mutationFn: () => unlikePostRequest(post.id, session?.accessToken!),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["posts"] });
+    },
+  });
+
   return (
     <View className="flex-row gap-3 p-4 border-b border-b-gray-200">
       <Image
@@ -46,6 +67,9 @@ export default function FeedPostItem({ post }: FeedPostItemProps) {
 
           <View className="flex-row items-center gap-1">
             <MaterialCommunityIcons
+              onPress={() =>
+                post.is_liked ? unlikeMutation.mutate() : likeMutation.mutate()
+              }
               name={post.is_liked ? "heart" : "heart-outline"}
               size={20}
               color={post.is_liked ? "crimson" : "gray"}
