@@ -28,8 +28,21 @@
       "bundler": "metro"
     },
     "plugins": [
-      ["expo-router", { "origin": "http://localhost:8081" }],
+      [
+        "expo-router",
+        {
+          "origin": "http://localhost:8081"
+        }
+      ],
       "expo-secure-store"
-    ]
+    ],
+    "extra": {
+      "router": {
+        "origin": "http://localhost:8081"
+      },
+      "eas": {
+        "projectId": "43e08ecd-ba64-4053-bf07-d0d466c0ba92"
+      }
+    }
   }
 }
