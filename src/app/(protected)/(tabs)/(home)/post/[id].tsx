@@ -5,6 +5,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useLocalSearchParams } from "expo-router";
 import { ActivityIndicator, Text } from "react-native";
 import { getPost } from "@/services/postService";
+import Head from "expo-router/head";
 
 export default function PostDetails() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -24,5 +25,14 @@ export default function PostDetails() {
     return <Text>Post Not found</Text>;
   }
 
-  return <FeedPostItem post={data} />;
+  return (
+    <>
+      <Head>
+        <title>Tweet from {data.author.name}</title>
+        <meta name="description" content={data.content} />
+      </Head>
+
+      <FeedPostItem post={data} />
+    </>
+  );
 }
