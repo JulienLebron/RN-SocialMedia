@@ -56,9 +56,10 @@ export default function FeedScreen() {
     <>
       <FlatList
         data={posts}
+        contentContainerClassName="w-full max-w-lg mx-auto"
         renderItem={({ item }) => (
           <Link href={`/post/${item.id}`} asChild>
-            <Pressable>
+            <Pressable className="flex-1">
               <FeedPostItem post={item} />
             </Pressable>
           </Link>
