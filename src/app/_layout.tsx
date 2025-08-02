@@ -17,6 +17,7 @@ import { useReactQueryDevTools } from "@dev-plugins/react-query";
 import NetInfo from "@react-native-community/netinfo";
 import type { AppStateStatus } from "react-native";
 import { useEffect } from "react";
+import NotificationsProvider from "@/providers/Notifications";
 
 const queryClient = new QueryClient();
 
@@ -53,9 +54,11 @@ export default function RootLayout() {
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
-        <ThemeProvider value={CustomTheme}>
-          <Slot />
-        </ThemeProvider>
+        <NotificationsProvider>
+          <ThemeProvider value={CustomTheme}>
+            <Slot />
+          </ThemeProvider>
+        </NotificationsProvider>
       </AuthProvider>
     </QueryClientProvider>
   );
