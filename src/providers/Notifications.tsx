@@ -1,8 +1,17 @@
-import { createContext, PropsWithChildren, useEffect, useState } from "react";
+import {
+  createContext,
+  PropsWithChildren,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import * as Notifications from "expo-notifications";
 import { Alert, Platform } from "react-native";
 import * as Device from "expo-device";
 import Constants from "expo-constants";
+import { useMutation } from "@tanstack/react-query";
+import { updateUserRequest } from "@/services/userService";
+import { useAuth } from "./AuthProvider";
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -22,6 +31,23 @@ export default function NotificationsProvider({ children }: PropsWithChildren) {
     useState<Notifications.PermissionStatus | null>(null);
   const [pushToken, setPushToken] = useState<string>();
 
+  const notificationListener = useRef<
+    Notifications.EventSubscription | undefined
+  >(undefined);
+  const responseListener = useRef<Notifications.EventSubscription | undefined>(
+    undefined
+  );
+
+  const lastNotification = Notifications.useLastNotificationResponse();
+
+  console.log("Last notif: ", lastNotification);
+
+  const { session } = useAuth();
+  const { mutate: updateUser } = useMutation({
+    mutationFn: () =>
+      updateUserRequest({ push_token: pushToken }, session?.accessToken!),
+  });
+
   useEffect(() => {
     ensurePermissions();
   }, []);
@@ -29,6 +55,35 @@ export default function NotificationsProvider({ children }: PropsWithChildren) {
   useEffect(() => {
     registerForPushNotificationsAsync().then(setPushToken);
   }, [permissions]);
+
+  useEffect(() => {
+    if (pushToken && session?.accessToken) {
+      updateUser();
+    }
+  }, [pushToken, session?.accessToken]);
+
+  useEffect(() => {
+    notificationListener.current =
+      Notifications.addNotificationReceivedListener((notification) => {
+        console.log("Notification received:  ", notification);
+      });
+
+    responseListener.current =
+      Notifications.addNotificationResponseReceivedListener((response) => {
+        console.log("Response received", response);
+      });
+
+    return () => {
+      if (notificationListener.current) {
+        Notifications.removeNotificationSubscription(
+          notificationListener.current
+        );
+      }
+      if (responseListener.current) {
+        Notifications.removeNotificationSubscription(responseListener.current);
+      }
+    };
+  }, []);
 
   const ensurePermissions = async () => {
     // on Android, we first have to create a channel then ask for permissions

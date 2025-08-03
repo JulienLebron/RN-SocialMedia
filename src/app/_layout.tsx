@@ -18,6 +18,7 @@ import NetInfo from "@react-native-community/netinfo";
 import type { AppStateStatus } from "react-native";
 import { useEffect } from "react";
 import NotificationsProvider from "@/providers/Notifications";
+import { useNotificationObserver } from "@/hooks/useNotificationsObserver";
 
 const queryClient = new QueryClient();
 
@@ -38,6 +39,7 @@ const CustomTheme = {
 
 export default function RootLayout() {
   useReactQueryDevTools(queryClient);
+  useNotificationObserver();
 
   function onAppStateChange(status: AppStateStatus) {
     if (Platform.OS !== "web") {
