@@ -7,9 +7,16 @@ export const unstable_settings = {
 
 export default function HomeStack() {
   return (
-    <Stack>
+    <Stack screenOptions={{ headerShown: true }}>
       <Stack.Screen name="index" options={{ title: "Feed" }} />
-      <Stack.Screen name="post/[id]" options={{ title: "Post" }} />
+      <Stack.Screen
+        name="post/[id]"
+        options={{
+          title: "Post",
+          headerBackTitle: "Retour",
+          headerBackVisible: true,
+        }}
+      />
     </Stack>
   );
 }

@@ -3,6 +3,7 @@ import jwt from "jsonwebtoken";
 export function getDecodedToken(req: Request) {
   const authHeader = req.headers.get("authorization");
   const token = authHeader?.split(" ")[1];
+  console.log("Token:", token);
   if (!token) {
     return null;
   }
